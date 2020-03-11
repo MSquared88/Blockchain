@@ -105,9 +105,7 @@ class Blockchain(object):
         
         # return True or False
 
-        return guess_hash[:3] == "000"
-
-
+        return guess_hash[:6] == "000000"
 # Instantiate our Node
 app = Flask(__name__)
 
@@ -129,15 +127,15 @@ def mine():
         return jsonify(response), 400
         
     block_string = json.dumps(blockchain.last_block, sort_keys=True)
-    if blockchain.valid_proof(block_string, data["proof"]) is not False:
-
+    if blockchain.valid_proof(block_string, data["proof"]) != False:
         # Forge the new Block by adding it to the chain with the proof
         previous_hash = blockchain.hash(blockchain.last_block)
         block = blockchain.new_block(data["proof"], previous_hash)
         response = {
             # TODO: Send a JSON response with the new block
-            "message": "New block forged",
-            "new_block": block
+            "message": "New Block Forged",
+            "new_block": block,
+            "id": data["id"]
         }
         return jsonify(response), 200
 
