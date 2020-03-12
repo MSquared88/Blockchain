@@ -32,6 +32,7 @@ class Blockchain(object):
         # :return: <int> The index of the `block` that will hold this transaction
 
         self.current_transactions.append({
+            "id": time(),
             "sender": sender,
             "recipient": recipient,
             "amount": amount
@@ -130,6 +131,9 @@ class Blockchain(object):
         return guess_hash[:6] == "000000"
 
     def get_user_info(self, user_id):
+        coin_total = 0
+        user_transactions = []
+
         for block in self.chain:
             for t in block['transactions']:
                 if t['recipient'] == user_id:
@@ -139,6 +143,11 @@ class Blockchain(object):
                 elif t['sender'] == user_id:
                     coin_total -= t['amount']
                     user_transactions.append(t)
+        user_info = {
+            "coin_total": coin_total,
+            "user_transactions": user_transactions
+        }
+        return user_info 
 
         
 # Instantiate our Node
@@ -171,7 +180,7 @@ def recieve_transactions():
     return jsonify(response), 200
 
 @app.route('/user/info', methods=['POST'])
-def user_coins():
+def user_info():
     data = request.get_json()
 
     if 'user_id' not in data:
@@ -179,12 +188,11 @@ def user_coins():
         "message":  "'user_id' is a required field"
         }
         return jsonify(response), 400
-    
+
+    user_info = blockchain.get_user_info(data['user_id'])
+
     response = {
-        user_info = {
-            "user_coins": coin_total,
-            "user_transactions": user_transactions
-        }
+        "user_info": user_info
     }
     return jsonify(response), 200    
 
