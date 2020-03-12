@@ -24,7 +24,7 @@ function App() {
   const getUserInfo = (userId) => {
     axios.post("http://localhost:5000/user/info", {user_id: userId})
       .then(res => {
-        console.log(res.data);
+        console.log(res.data.user_info);
         setUserInfo(res.data.user_info)
       })
       .catch(err => console.log(err));
@@ -42,13 +42,13 @@ function App() {
       </>
       :
       <>
-        <h1>{`Total CS25 Coin: ${userInfo.user_total}`}</h1>
+        <h1>{`Total CS25 Coin: ${userInfo.coin_total}`}</h1>
         <h1>Transactions</h1>
         <TransactionsContainer> 
           {userInfo.user_transactions.map(block => {
             return (
               <TransactionsCard>
-                <h2>Transaction Id: {block.block_id}</h2>
+                <h2>Transaction Id: {block.id}</h2>
                 <h2>Amount: {block.amount}</h2>
                 <h2>Sender: {block.sender}</h2>
                 <h2>Recipient: {block.recipient}</h2>
